@@ -21,8 +21,8 @@ body{
     display: flex;
     align-items: center;
 }
-.brand-logo{
-    height: 70px;
+.logo-container img{
+    height: 60px;
 }
 .nav-links{
     margin-top: 10px;
@@ -35,6 +35,10 @@ body{
     text-transform: capitalize;
     color: #fff;
     opacity: 0.9;
+    transition: color 0.3s ease;
+}
+.nav-items a:hover{
+    color: #03a9f4;
 }
 .right-container{
     display: block;
@@ -77,6 +81,10 @@ body{
     font-size: 15px;
     font-weight: 700;
     text-decoration: none;
+    transition: color 0.3s ease;
+}
+.login-link:hover{
+    color: #03a9f4;
 }
 .carousel-container{
     position: relative;
