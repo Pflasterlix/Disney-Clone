@@ -1,4 +1,35 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Funktion zum Abrufen der Poster-URL aus der OMDB-API
+    const getPosterUrl = async (imdbID) => {
+        const apiKey = '614e1de6';
+        const apiUrl = `http://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`;
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            // Hier die Logik anpassen, um die Poster-URL aus den API-Daten zu extrahieren.
+            const posterUrl = data.Poster;  // Hier müsste die korrekte Eigenschaft aus den API-Daten verwendet werden.
+
+            if (posterUrl) {
+                return posterUrl;
+            } else {
+                console.warn('Poster-URL nicht verfügbar.');
+                return null;
+            }
+        } catch (error) {
+            console.error('Fehler beim Abrufen der Poster-URL:', error);
+            return null;
+        }
+    };
+
+    // Funktion zum Abrufen der Trailer-URL aus einer Quelle (ersetzen Sie dies durch Ihre Logik)
+    const getTrailerUrl = async (imdbID) => {
+        // Hier sollte die Logik zum Abrufen der Trailer-URL implementiert werden.
+        // Ersetzen Sie dies durch Ihre eigene Implementierung.
+        return null;
+    };
+
     // Array für Filmdaten
     let movies = [
         { name: 'Loki', des: 'Beschreibung für Loki', imdbID: 'tt9140554' },
@@ -20,15 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let content = document.createElement('div');
         let h1 = document.createElement('h1');
         let p = document.createElement('p');
-        let img = document.createElement('img'); // Bilddatei hinzufügen
+        let img = document.createElement('img');
 
         // Elemente verknüpfen
         h1.appendChild(document.createTextNode(movies[slideIndex].name));
         p.appendChild(document.createTextNode(movies[slideIndex].des));
-        img.src = await getPosterUrl(movies[slideIndex].imdbID); // Bilddatei von der API abrufen
+        img.src = await getPosterUrl(movies[slideIndex].imdbID);
         content.appendChild(h1);
         content.appendChild(p);
-        content.appendChild(img); // Bilddatei dem Inhalt hinzufügen
+        content.appendChild(img);
         slide.appendChild(content);
 
         // Klassen zuweisen
@@ -56,56 +87,23 @@ document.addEventListener('DOMContentLoaded', () => {
         slideIndex++;
     };
 
-    // Funktion zum Abrufen der Poster-URL aus der OMDB-API
-    const getPosterUrl = async (imdbID) => {
-        const apiKey = '614e1de6';
-        const apiUrl = `http://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`;
-
-        try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-
-            // Hier die Logik anpassen, um die Poster-URL aus den API-Daten zu extrahieren.
-            const posterUrl = data.Poster;  // Hier müsste die korrekte Eigenschaft aus den API-Daten verwendet werden.
-
-            if (posterUrl) {
-                return posterUrl;
-            } else {
-                console.warn('Poster-URL nicht verfügbar.');
-                return null;
-            }
-        } catch (error) {
-            console.error('Fehler beim Abrufen der Poster-URL:', error);
-            return null;
-        }
-    };
-
     // Initial drei Slides erstellen
     for (let i = 0; i < 3; i++) {
-        createSlide();
+        await createSlide();  // Verwenden von 'await', um sicherzustellen, dass das Erstellen abgeschlossen ist
     }
 
     // Slides alle 3 Sekunden aktualisieren
-    setInterval(() => {
-        createSlide();
+    setInterval(async () => {
+        await createSlide();
     }, 3000);
 
     // Video Cards
     const videoCards = [...document.querySelectorAll('.video-card')];
 
-    function attachClickEvent(videoCard) {
-        videoCard.addEventListener('click', function () {
-            // Hier sollte Logik für die Trailer-Wiedergabe stehen
-            // Zum Beispiel: Zeigen Sie ein Popup-Fenster mit dem Video an oder leiten Sie auf eine andere Seite um
-            console.log('Trailer abspielen für:', videoCard.querySelector('.card-img').alt);
-        });
-    }
-
     videoCards.forEach(item => {
         item.addEventListener('mouseover', () => {
-            let video = item.querySelector('video'); // Beachte die Änderung des Selektors auf 'video'
+            let video = item.querySelector('video');
             video.play().catch(error => {
-                // Ignoriere den Fehler, wenn das automatische Abspielen blockiert wurde
                 if (error.name === 'NotAllowedError') {
                     console.warn('Automatisches Abspielen blockiert. Benutzerinteraktion erforderlich.');
                 }
@@ -113,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         item.addEventListener('mouseleave', () => {
-            let video = item.querySelector('video'); // Beachte die Änderung des Selektors auf 'video'
+            let video = item.querySelector('video');
             video.pause();
         });
     });
